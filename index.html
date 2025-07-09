@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PragmaCash SDK - Wariant Zaawansowany</title>
+    
+    <!-- PragmaCash SDK Scripts -->
+    <script>
+      window.pragmaGoReady = new Promise((resolve) => {
+        window.onPragmaGoLoad = () => {
+          resolve(window.PragmaGoSDK.PragmaGo);
+        };
+      });
+    </script>
+    <script type="module" crossorigin src="https://cdn.pragmago.pl/pragma-cash-sdk/pragma-cash-sdk.js"></script>
+    <script type="module" crossorigin src="https://cdn.pragmago.pl/pragma-cash-front/pragma-cash-widget.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PragmaCash SDK - Wariant zaawansowany</title>
+
+  <!-- SDK Scripts -->
+  <script>
+    window.pragmaGoReady = new Promise((resolve) => {
+      window.onPragmaGoLoad = () => {
+        resolve(window.PragmaGoSDK.PragmaGo);
+      };
+    });
+  </script>
+  <script type="module" crossorigin src="https://cdn.pragmago.pl/pragma-cash-sdk/pragma-cash-sdk.js"></script>
+  <script type="module" crossorigin src="https://cdn.pragmago.pl/pragma-cash-front/pragma-cash-widget.js"></script>
+  <!-- Widget Styles -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f5f5f5;
+    }
+
+    .pragma-widget-container {
+      font-family: Arial, sans-serif;
+      max-width: 300px;
+      margin: 20px auto;
+    }
+
+    .pragma-offer-card, .pragma-error-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+      padding: 16px;
+    }
+
+    .pragma-offer-badge {
+      background: #4caf50;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .pragma-badge-warning {
+      background: #ff9800 !important;
+    }
+
+    .pragma-badge-info {
+      background: #2196f3 !important;
+    }
+
+    .pragma-offer-title {
+      margin: 8px 0;
+      color: #333;
+    }
+
+    .pragma-amount-section {
+      background: rgba(33, 150, 243, 0.1);
+      padding: 16px;
+      border-radius: 6px;
+      text-align: center;
+      margin: 12px 0;
+    }
+
+    .pragma-message-section {
+      padding: 16px;
+      border-radius: 6px;
+      margin: 12px 0;
+      text-align: center;
+    }
+
+    .pragma-message-warning {
+      background: rgba(255, 152, 0, 0.1);
+      border: 1px solid rgba(255, 152, 0, 0.3);
+    }
+
+    .pragma-message-info {
+      background: rgba(33, 150, 243, 0.1);
+      border: 1px solid rgba(33, 150, 243, 0.3);
+    }
+
+    .pragma-message-section h4 {
+      margin: 0 0 8px 0;
+      color: #333;
+      font-size: 16px;
+    }
+
+    .pragma-message-section p {
+      margin: 0;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .pragma-amount-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2196f3;
+      margin: 8px 0;
+    }
+
+    .pragma-cta-button, .pragma-secondary-button {
+      width: 100%;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .pragma-cta-button {
+      background: #2196f3;
+      color: white;
+    }
+
+    .pragma-cta-button:hover {
+      background: #1976d2;
+    }
+
+    .pragma-secondary-button {
+      background: #f5f5f5;
+      color: #333;
+      border: 1px solid #ddd;
+      margin-top: 12px;
+    }
+
+    .pragma-secondary-button:hover {
+      background: #e0e0e0;
+    }
+
+    .pragma-cta-button:disabled, .pragma-secondary-button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .pragma-highlight-cta {
+      animation: pragmaPulse 1s infinite;
+      box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7);
+    }
+
+    @keyframes pragmaPulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7);
+      }
+      70% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 10px rgba(33, 150, 243, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(33, 150, 243, 0);
+      }
+    }
+
+    .pragma-error-content p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .demo-section {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .demo-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .demo-button {
+      padding: 8px 16px;
+      background: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .demo-button:hover {
+      background: #1976d2;
+    }
+  </style>
+</head>
+<body>
+<h1>PragmaCash SDK - Wariant zaawansowany</h1>
+
+<div class="demo-section">
+  <h2>Demo - Symulacja różnych stanów</h2>
+  <div class="demo-buttons">
+    <button class="demo-button" onclick="simulateAvailable()">Oferta dostępna mock</button>
+    <button class="demo-button" onclick="simulateNoOffer()">Brak oferty mock</button>
+    <button class="demo-button" onclick="simulateOtherUser()">Inny użytkownik mock</button>
+    <button class="demo-button" onclick="simulateError()">Błąd mock</button>
+    <button class="demo-button" onclick="initializeWidget()">Inicjalizuj SDK dane rzeczywiste</button>
+  </div>
+</div>
+
+<!-- Kontener na niestandardowy widget -->
+<div id="pragma-cash-custom-widget" class="pragma-widget-container" style="display: none;">
+  <!-- Tutaj będzie renderowany widget -->
+</div>
+
+<!-- Ukryty div wymagany przez SDK z ustawieniem języka -->
+<div id="pragmago" data-widget-render="false" data-language="pl" style="display: none;"></div>
+
+<script>
+
+  //dane do uzupełnienia poprawnymi
+  const partnerKey = 'xxx';
+
+  const partnerCustomerId = 'xxx';
+
+  //dane do uzupełnienia poprawnymi
+  const CUSTOMER_DATA = {
+    registrationNumber: {
+      country: "PL",
+      registrationNumber: "PL123123123"
+    },
+    firstName: "Test",
+    lastName: "Testowy",
+    phone: {
+      number: "45512444",
+      prefix: "+48"
+    },
+    email: "test.mail@pragmago.pl",
+    identificationNumber: "42142141",
+    identityDocument: {
+      type: "idCard",
+      number: "ZZC314412"
+    },
+    //  bankAccounts: [{
+    //    iban: "PL32131245124124142131",
+    //   swift: "BPKOPLPW"
+    //  }],
+    checksum: null,
+    returnUrl: "https://panel.pragmago.pl",
+    userId: "32145"
+  };
+
+  // Konfiguracja
+  const CONFIG = {
+    partnerKey: partnerKey,
+    partnerCustomerId: partnerCustomerId,
+    customerData: CUSTOMER_DATA
+  };
+
+  // Główna funkcja inicjalizacji
+  async function initializeWidget() {
+    try {
+      const PragmaGo = await window.pragmaGoReady;
+      const pragmaCash = PragmaGo.getInstance();
+
+      console.log('Inicjalizacja SDK...');
+
+      // Inicjalizacja SDK
+      const initResult = await pragmaCash.initializePragmaCash(
+        CONFIG.partnerKey,
+        CONFIG.partnerCustomerId,
+        CONFIG.customerData
+      );
+
+      console.log('Dane inicjalizacyjne:', initResult);
+
+      // Renderowanie widgetu na podstawie odpowiedzi
+      renderCustomWidget(initResult);
+
+    } catch (error) {
+      console.error('Error initializing SDK:', error);
+      renderErrorWidget();
+    }
+  }
+  // Automatyczne inicjalizowanie SDK po załadowaniu strony
+
+  // document.addEventListener('DOMContentLoaded', async function () {
+  //   try {
+  //     const PragmaGo = await window.pragmaGoReady;
+  //     const pragmaCash = PragmaGo.getInstance();
+  //
+  //     console.log('Inicjalizacja PragmaCash SDK...');
+  //
+  //     // Inicjalizacja SDK
+  //     const initResult = await pragmaCash.initializePragmaCash(
+  //       CONFIG.partnerKey,
+  //       CONFIG.partnerCustomerId,
+  //       CONFIG.customerData
+  //     );
+  //
+  //     console.log('Dane inicjalizacyjne:', initResult);
+  //
+  //     // Renderowanie widgetu na podstawie odpowiedzi
+  //     renderCustomWidget(initResult);
+  //
+  //   } catch (error) {
+  //     console.error('Error initializing SDK:', error);
+  //     renderErrorWidget();
+  //   }
+  // });
+
+  // Funkcja renderowania widgetu
+  function renderCustomWidget(initData) {
+    const widgetContainer = document.getElementById('pragma-cash-custom-widget');
+
+    if (initData?.available === true) {
+      // Widget dostępny - renderuj ofertę
+      renderOfferWidget(initData);
+    } else if (initData?.noOfferReason) {
+      // Widget niedostępny - wyświetl powód wewnątrz standardowego widgetu
+      renderOfferWidgetWithMessage(initData, 'no-offer');
+    } else if (initData?.otherUserFillsForm === true) {
+      // Inny użytkownik wypełnia formularz - wyświetl info wewnątrz widgetu
+      renderOfferWidgetWithMessage(initData, 'other-user');
+    } else {
+      // Błąd lub brak danych
+      renderErrorWidget();
+    }
+
+    widgetContainer.style.display = 'block';
+  }
+
+  // Renderowanie oferty dostępnej
+  function renderOfferWidget(data) {
+    const container = document.getElementById('pragma-cash-custom-widget');
+
+    // Pobierz nazwę akcji z whereAmI.cta lub użyj domyślnej
+    const ctaText = getCtaButtonText(data.whereAmI?.cta || 'START_PROPOSAL');
+    const notInitializedBadge = data.notInitialized ? `<div class="pragma-offer-badge pragma-badge-warning">Not initialized</div>` : ''
+    container.innerHTML = `
+        <div class="pragma-offer-card">
+            ${notInitializedBadge}
+          <div class="pragma-offer-header">
+            <span class="pragma-offer-badge">Oferta dla Ciebie</span>
+            <h3 class="pragma-offer-title">PragmaCash</h3>
+          </div>
+
+          <div class="pragma-offer-content">
+            <div class="pragma-amount-section">
+              <p class="pragma-amount-label">Dostępna kwota:</p>
+              <p class="pragma-amount-value">
+                ${data.value?.amount || '0'}
+                ${data.value?.currency || 'PLN'}
+              </p>
+            </div>
+             <button id="pragma-open-modal-landing" class="pragma-cta-button">
+              Szczegóły usługi
+            </button>
+            <p></p>
+            <button id="pragma-open-modal" class="pragma-cta-button">
+              ${ctaText}
+            </button>
+          </div>
+        </div>
+      `;
+
+    // Dodanie obsługi kliknięcia
+    document.getElementById('pragma-open-modal').addEventListener('click', ()=>openPragmaModal(false));
+    document.getElementById('pragma-open-modal-landing').addEventListener('click', ()=>openPragmaModal(true));
+  }
+
+  // Renderowanie widgetu z komunikatem
+  function renderOfferWidgetWithMessage(data, messageType) {
+    const container = document.getElementById('pragma-cash-custom-widget');
+
+    let messageContent = '';
+    let showButton = false;
+
+    switch (messageType) {
+      case 'no-offer':
+        messageContent = `
+            <div class="pragma-message-section pragma-message-warning">
+              <h4>Brak dostępnej oferty</h4>
+              <p>${data.noOfferReason || 'Obecnie nie mamy dla Ciebie dostępnej oferty.'}</p>
+            </div>
+          `;
+        break;
+
+      case 'other-user':
+        messageContent = `
+            <div class="pragma-message-section pragma-message-info">
+              <h4>Formularz w trakcie wypełniania</h4>
+              <p>Wniosek jest obecnie wypełniany przez inną osobę z Twojej firmy.</p>
+            </div>
+          `;
+        showButton = true;
+        break;
+    }
+
+    container.innerHTML = `
+        <div class="pragma-offer-card">
+          <div class="pragma-offer-header">
+            <span class="pragma-offer-badge ${messageType === 'no-offer' ? 'pragma-badge-warning' : 'pragma-badge-info'}">
+              ${messageType === 'no-offer' ? 'Informacja' : 'W trakcie'}
+            </span>
+            <h3 class="pragma-offer-title">PragmaCash</h3>
+          </div>
+
+          <div class="pragma-offer-content">
+            ${messageContent}
+
+            ${showButton ? `
+              <button id="pragma-refresh-status" class="pragma-secondary-button">
+                Odśwież status
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+
+    // Dodanie obsługi odświeżania dla przypadku "other-user"
+    if (showButton) {
+      document.getElementById('pragma-refresh-status').addEventListener('click', refreshWidgetStatus);
+    }
+  }
+
+  // Renderowanie błędu
+  function renderErrorWidget() {
+    const container = document.getElementById('pragma-cash-custom-widget');
+
+    container.innerHTML = `
+        <div class="pragma-error-card">
+          <div class="pragma-error-content">
+            <h3>Wystąpił błąd</h3>
+            <p>Nie udało się załadować widgetu PragmaCash</p>
+            <button id="pragma-retry" class="pragma-secondary-button">
+              Spróbuj ponownie
+            </button>
+          </div>
+        </div>
+      `;
+
+    document.getElementById('pragma-retry').addEventListener('click', initializeWidget);
+    container.style.display = 'block';
+  }
+
+  // Otwieranie modala
+  async function openPragmaModal(landingPage=false) {
+    try {
+      const PragmaGo = await window.pragmaGoReady;
+      const pragmaCash = PragmaGo.getInstance();
+
+      // Wyświetl loading state
+      const button = document.getElementById('pragma-open-modal');
+      const button2 = document.getElementById('pragma-open-modal-landing');
+      const originalText = button.textContent;
+      const originalText2 = button2.textContent;
+      button.textContent = 'Ładowanie...';
+      button2.textContent = 'Ładowanie...';
+      button.disabled = true;
+      button2.disabled = true;
+
+      // Otwórz modal | ladingPage flaga bool czy otworzyć landing czy 1 krok wniosku / aktualny krok wniosku
+      const result = await pragmaCash.openWidgetModal(landingPage);
+
+      // Przywróć przycisk
+      button.textContent = originalText;
+      button2.textContent = originalText2;
+      button.disabled = false;
+      button2.disabled = false;
+
+      if (result !== true && result !== 'Data sent to widget') {
+        console.warn('Widget modal result:', result);
+      }
+
+    } catch (error) {
+      console.error('Error opening modal:', error);
+
+      // Przywróć przycisk w przypadku błędu
+      const button = document.getElementById('pragma-open-modal');
+      const button2 = document.getElementById('pragma-open-modal-landing');
+      if (button) {
+        button.textContent = 'Wniosek';
+        button.disabled = false;
+      }
+      if (button2) {
+        button2.textContent = 'Szczegóły usługi';
+        button2.disabled = false;
+      }
+    }
+  }
+
+  // Odświeżanie statusu widgetu
+  async function refreshWidgetStatus() {
+    try {
+      const PragmaGo = await window.pragmaGoReady;
+      const pragmaCash = PragmaGo.getInstance();
+
+      // Pobierz aktualne dane widgetu
+      const refreshedData = await pragmaCash.getWidgetData(true);
+
+      if (refreshedData.success) {
+        renderCustomWidget(refreshedData.data);
+      }
+
+    } catch (error) {
+      console.error('Error refreshing widget status:', error);
+    }
+  }
+
+  // Mapowanie CTA na tekst przycisku
+  function getCtaButtonText(cta) {
+    const ctaTexts = {
+      'START_PROPOSAL': 'Wniosek',
+      'GO_TO_PROPOSAL': 'Przejdź do wniosku',
+      'FINISH_PROPOSAL': 'Dokończ wniosek',
+      'WAITING_FOR_DECISION': 'Sprawdź status',
+      'CONTINUE_SIGNING': 'Kontynuuj podpisywanie'
+    };
+
+    return ctaTexts[cta] || 'Zobacz szczegóły';
+  }
+
+  // Demo functions - symulowanie różnych stanów
+  function simulateAvailable() {
+    const mockData = {
+      available: true,
+      // tylko dla wyświetlenia stanu w demo przypadku, normalnie nie występuje.
+      notInitialized:true,
+      value: { amount: "25000.00", currency: "PLN" },
+      whereAmI: { cta: "START_PROPOSAL" }
+    };
+    renderCustomWidget(mockData);
+  }
+
+  function simulateNoOffer() {
+    const mockData = {
+      available: false,
+      noOfferReason: "Brak wystarczającego limitu kredytowego"
+    };
+    renderCustomWidget(mockData);
+  }
+
+  function simulateOtherUser() {
+    const mockData = {
+      available: false,
+      otherUserFillsForm: true
+    };
+    renderCustomWidget(mockData);
+  }
+
+  function simulateError() {
+    renderErrorWidget();
+  }
+
+  // Automatyczna inicjalizacja po załadowaniu strony
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Strona załadowana. Kliknij "Inicjalizuj SDK" aby przetestować rzeczywiste połączenie.');
+
+    // Pokaż domyślny stan dostępnej oferty jako demo
+    simulateAvailable();
+  });
+
+</script>
+</body>
+</html>
