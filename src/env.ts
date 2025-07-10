@@ -26,7 +26,7 @@ export const getConfigFromEnv = (): PragmaCashConfig => {
         type: (import.meta.env.VITE_PRAGMA_IDENTITY_TYPE as 'idCard' | 'passport' | 'drivingLicense') || 'idCard',
         number: import.meta.env.VITE_PRAGMA_IDENTITY_NUMBER || 'ZZC314412'
       },
-      checksum: null,
+      checksum: import.meta.env.VITE_PRAGMA_CHECKSUM || "1234",
     }
   };
 };
