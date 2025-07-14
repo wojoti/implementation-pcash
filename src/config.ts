@@ -7,7 +7,7 @@ export const PRAGMA_CASH_CONFIG: PragmaCashConfig = getConfigFromEnv();
 
 // Konfiguracja SDK scripts
 export const SDK_CONFIG = {
-  sdkUrl: 'https://cdn.pragmago.pl/pragma-cash-sdk/pragma-cash-sdk.js',
-  widgetUrl: 'https://cdn.pragmago.pl/pragma-cash-front/pragma-cash-widget.js',
+  sdkUrl: 'https://pragma-cash-sdk.stage.qa.pragmago.tech/pragma-cash-sdk/pragma-cash-sdk.js',
+  widgetUrl: 'https://pragma-cash-sdk.stage.qa.pragmago.tech/pragma-cash-front/pragma-cash-widget.js',
   language: 'pl', // pl, en, cs, ro, sk
 } as const;
